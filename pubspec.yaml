@@ -1,0 +1,31 @@
+name: exam_app_elevate
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  injectable:
+  get_it:
+  retrofit: ^4.9.0
+  json_annotation: ^4.12.0
+  dio: ^5.11.1
+  flutter_bloc: ^9.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.16.1
+  injectable_generator:
+  json_serializable: ^6.15.2
+  retrofit_generator: ^10.0.1
+
+flutter:
+  uses-material-design: true
