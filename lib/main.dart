@@ -1,3 +1,5 @@
+import 'package:exam_app_elevate/core/theme/light_theme.dart';
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,9 +12,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(),
-    );
+    return MaterialApp(theme: lightTheme, home: Scaffold());
   }
 }
