@@ -31,7 +31,9 @@ dependencies:
   # svg support
   flutter_svg: ^2.4.0
 
-
+  # Storage 
+  flutter_secure_storage:
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
