@@ -1,4 +1,5 @@
 import 'package:exam_app_elevate/Config/Di/di.dart';
+import 'package:exam_app_elevate/core/constants/app_strings.dart';
 import 'package:exam_app_elevate/core/theme/app_colors.dart';
 import 'package:exam_app_elevate/core/utils/validators.dart';
 import 'package:exam_app_elevate/feature/auth/login/presentation/viewmodel/sign_in_cubit.dart';
@@ -16,14 +17,12 @@ class SignInView extends StatefulWidget {
 }
 
 class _SignInViewState extends State<SignInView> {
-  // Created here so the whole screen can use it without context
+  // Created here so the whole screen can use it
   late final SignInViewModel viewModel = getIt<SignInViewModel>();
 
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-
-  // Each notifier rebuilds only the widget that listens to it
   final hidePassword = ValueNotifier<bool>(true);
   final rememberMe = ValueNotifier<bool>(false);
 
@@ -34,7 +33,7 @@ class _SignInViewState extends State<SignInView> {
     passwordController.dispose();
     hidePassword.dispose();
     rememberMe.dispose();
-    viewModel.close(); // we created it, so we close it
+    viewModel.close();
     super.dispose();
   }
 
@@ -43,24 +42,24 @@ class _SignInViewState extends State<SignInView> {
     return BlocProvider<SignInViewModel>.value(
       value: viewModel,
       child: Scaffold(
-        appBar: AppBar(title: const Text('Login'), centerTitle: true),
-        // Listens to state changes without rebuilding the screen
-        body: BlocListener<SignInViewModel, SignInStates>(
+        appBar: AppBar(title: const Text(AppStrings.login), centerTitle: true),
+        // Listens to state changes
+        body: BlocListener<SignInViewModel, SignInState>(
+          // Listen only when the sign in API state changes
+          listenWhen: (previous, current) =>
+              previous.signInState != current.signInState,
           listener: (context, state) {
-            switch (state) {
-              case InitialSignInState():
-              case FormChangedSignInState():
-              case LoadingSignInState():
-                break; // nothing to do
-              case SuccessSignInState():
-                // Temporary navigation, will be replaced with go_router later
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) =>  HomeView()),
-                );
-              case ErrorSignInState():
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.errMsg)));
+            if (state.signInState.data != null) {
+              // Temporary navigation, will be replaced with go_router later
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => HomeView()),
+              );
+            }
+            if (state.signInState.errMsg != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.signInState.errMsg!)),
+              );
             }
           },
           child: SafeArea(
@@ -75,7 +74,10 @@ class _SignInViewState extends State<SignInView> {
                 ),
               ),
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
+                ),
                 children: [
                   // Email
                   TextFormField(
@@ -84,8 +86,8 @@ class _SignInViewState extends State<SignInView> {
                     textInputAction: TextInputAction.next,
                     validator: Validators.email,
                     decoration: const InputDecoration(
-                      labelText: 'Email',
-                      hintText: 'Enter your email',
+                      labelText: AppStrings.email,
+                      hintText: AppStrings.enterYourEmail,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -100,11 +102,13 @@ class _SignInViewState extends State<SignInView> {
                         textInputAction: TextInputAction.done,
                         validator: Validators.password,
                         decoration: InputDecoration(
-                          labelText: 'Password',
-                          hintText: 'Enter your password',
+                          labelText: AppStrings.password,
+                          hintText: AppStrings.enterYourPassword,
                           suffixIcon: IconButton(
                             icon: Icon(
-                              isHidden ? Icons.visibility_off : Icons.visibility,
+                              isHidden
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                             ),
                             onPressed: () =>
                                 hidePassword.value = !hidePassword.value,
@@ -131,7 +135,7 @@ class _SignInViewState extends State<SignInView> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Remember me',
+                        AppStrings.rememberMe,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const Spacer(),
@@ -139,33 +143,33 @@ class _SignInViewState extends State<SignInView> {
                         onPressed: () {
                           // TODO: go to forget password
                         },
-                        child: const Text('Forget password?'),
+                        child: const Text(AppStrings.forgetPassword),
                       ),
                     ],
                   ),
                   const SizedBox(height: 48),
 
                   // Login button
-                  BlocBuilder<SignInViewModel, SignInStates>(
+                  BlocBuilder<SignInViewModel, SignInState>(
                     // Rebuild only when the form validity or the loading changes
                     buildWhen: (previous, current) =>
                         previous.isFormValid != current.isFormValid ||
-                        previous is LoadingSignInState ||
-                        current is LoadingSignInState,
+                        previous.signInState.isLoading !=
+                            current.signInState.isLoading,
                     builder: (context, state) {
-                      final bool isLoading = state is LoadingSignInState;
+                      final bool isLoading = state.signInState.isLoading;
 
                       return ElevatedButton(
                         // Enabled only when the form is valid and not loading
                         onPressed: (!state.isFormValid || isLoading)
                             ? null
                             : () => viewModel.onEvent(
-                                  SignInEvent(
-                                    email: emailController.text.trim(),
-                                    password: passwordController.text,
-                                    rememberMe: rememberMe.value,
-                                  ),
+                                SignInEvent(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text,
+                                  rememberMe: rememberMe.value,
                                 ),
+                              ),
                         child: isLoading
                             ? const SizedBox(
                                 height: 20,
@@ -175,7 +179,7 @@ class _SignInViewState extends State<SignInView> {
                                   color: AppColors.white,
                                 ),
                               )
-                            : const Text('Login'),
+                            : const Text(AppStrings.login),
                       );
                     },
                   ),
@@ -186,7 +190,7 @@ class _SignInViewState extends State<SignInView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Don't have an account? ",
+                        AppStrings.dontHaveAccount,
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                       TextButton(
@@ -200,7 +204,7 @@ class _SignInViewState extends State<SignInView> {
                             decoration: TextDecoration.underline,
                           ),
                         ),
-                        child: const Text('Sign up'),
+                        child: const Text(AppStrings.signUp),
                       ),
                     ],
                   ),

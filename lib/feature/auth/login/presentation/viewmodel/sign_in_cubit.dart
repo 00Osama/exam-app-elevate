@@ -8,10 +8,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
-class SignInViewModel extends Cubit<SignInStates> {
+class SignInViewModel extends Cubit<SignInState> {
   final SignInUseCase _signInUseCase;
 
-  SignInViewModel(this._signInUseCase) : super(const InitialSignInState());
+  SignInViewModel(this._signInUseCase) : super(const SignInState());
 
   // The only entry point for the view
   void onEvent(SignInEvents event) {
@@ -27,15 +27,12 @@ class SignInViewModel extends Cubit<SignInStates> {
     }
   }
 
-  // Checks the fields and emits only if the validity changed
   void _onFormChanged({required String email, required String password}) {
     final bool isValid =
         Validators.email(email) == null &&
         Validators.password(password) == null;
 
-    if (isValid == state.isFormValid) return;
-
-    emit(FormChangedSignInState(isFormValid: isValid));
+    emit(state.copyWith(isFormValid: isValid));
   }
 
   Future<void> _signIn({
@@ -43,7 +40,10 @@ class SignInViewModel extends Cubit<SignInStates> {
     required String password,
     required bool rememberMe,
   }) async {
-    emit(LoadingSignInState(isFormValid: state.isFormValid));
+    // Start loading
+    emit(
+      state.copyWith(signInState: state.signInState.copyWith(isLoading: true)),
+    );
 
     final BaseResponse<SignInEntity> apiResult = await _signInUseCase(
       email: email,
@@ -57,16 +57,20 @@ class SignInViewModel extends Cubit<SignInStates> {
     switch (apiResult) {
       case SuccessBaseResponse<SignInEntity>():
         emit(
-          SuccessSignInState(
-            signInEntity: apiResult.data,
-            isFormValid: state.isFormValid,
+          state.copyWith(
+            signInState: state.signInState.copyWith(
+              isLoading: false,
+              data: apiResult.data,
+            ),
           ),
         );
       case ErrorBaseResponse<SignInEntity>():
         emit(
-          ErrorSignInState(
-            errMsg: apiResult.errMessage,
-            isFormValid: state.isFormValid,
+          state.copyWith(
+            signInState: state.signInState.copyWith(
+              isLoading: false,
+              errMsg: apiResult.errMessage,
+            ),
           ),
         );
     }

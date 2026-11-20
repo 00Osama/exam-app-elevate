@@ -1,3 +1,4 @@
+import 'package:exam_app_elevate/Config/Api%20calls/safe_api_call.dart';
 import 'package:exam_app_elevate/Config/BaseResponse/base_response.dart';
 import 'package:exam_app_elevate/feature/auth/login/data/apiclient/auth_api_client.dart';
 import 'package:exam_app_elevate/feature/auth/login/data/datasources/remote/sign_in_remote_data_source.dart';
@@ -12,14 +13,10 @@ class SignInRemoteDataSourceImpl implements SignInRemoteDataSource{
   SignInRemoteDataSourceImpl(this._authApiClient);
 
   @override
-  Future<BaseResponse<SignInResponse>> signIn({
-    required SignInRequest request,
-  }) async {
-    try {
-      final SignInResponse response = await _authApiClient.signIn(request);
-      return SuccessBaseResponse<SignInResponse>(data: response);
-    } catch (e) {
-      return ErrorBaseResponse<SignInResponse>(errorObj: e);
-    }
+  Future<BaseResponse<SignInResponse>> signIn({required SignInRequest request}) {
+   return safeApiCall(() => _authApiClient.signIn(request));
   }
-}
+  
+
+  }
+  

@@ -1,11 +1,13 @@
+import 'package:equatable/equatable.dart';
 import 'user_entity.dart';
 
-class SignInEntity {
+class SignInEntity extends Equatable {
   final String token;
   final UserEntity user;
 
   const SignInEntity({required this.token, required this.user});
 
+  // Fields used to compare two objects
   @override
-  String toString() => 'SignInEntity(user: $user)';
+  List<Object?> get props => [token, user];
 }
