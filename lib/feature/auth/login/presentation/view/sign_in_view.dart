@@ -16,6 +16,9 @@ class SignInView extends StatefulWidget {
 }
 
 class _SignInViewState extends State<SignInView> {
+  // Created here so the whole screen can use it without context
+  late final SignInViewModel viewModel = getIt<SignInViewModel>();
+
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -24,20 +27,21 @@ class _SignInViewState extends State<SignInView> {
   final hidePassword = ValueNotifier<bool>(true);
   final rememberMe = ValueNotifier<bool>(false);
 
-  // Free the controllers and notifiers when the screen is closed
+  // Free everything when the screen is closed
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     hidePassword.dispose();
     rememberMe.dispose();
+    viewModel.close(); // we created it, so we close it
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<SignInViewModel>(
-      create: (context) => getIt<SignInViewModel>(),
+    return BlocProvider<SignInViewModel>.value(
+      value: viewModel,
       child: Scaffold(
         appBar: AppBar(title: const Text('Login'), centerTitle: true),
         // Listens to state changes without rebuilding the screen
@@ -45,13 +49,14 @@ class _SignInViewState extends State<SignInView> {
           listener: (context, state) {
             switch (state) {
               case InitialSignInState():
+              case FormChangedSignInState():
               case LoadingSignInState():
                 break; // nothing to do
               case SuccessSignInState():
                 // Temporary navigation, will be replaced with go_router later
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (_) => HomeView()),
+                  MaterialPageRoute(builder: (_) =>  HomeView()),
                 );
               case ErrorSignInState():
                 ScaffoldMessenger.of(context)
@@ -62,11 +67,15 @@ class _SignInViewState extends State<SignInView> {
             child: Form(
               key: formKey,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              child: ListView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 24,
+              // Tell the view model to check the fields on every change
+              onChanged: () => viewModel.onEvent(
+                FormChangedEvent(
+                  email: emailController.text,
+                  password: passwordController.text,
                 ),
+              ),
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
                 children: [
                   // Email
                   TextFormField(
@@ -95,9 +104,7 @@ class _SignInViewState extends State<SignInView> {
                           hintText: 'Enter your password',
                           suffixIcon: IconButton(
                             icon: Icon(
-                              isHidden
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
+                              isHidden ? Icons.visibility_off : Icons.visibility,
                             ),
                             onPressed: () =>
                                 hidePassword.value = !hidePassword.value,
@@ -138,29 +145,27 @@ class _SignInViewState extends State<SignInView> {
                   ),
                   const SizedBox(height: 48),
 
-                  // Only the button rebuilds, when loading starts or ends
+                  // Login button
                   BlocBuilder<SignInViewModel, SignInStates>(
+                    // Rebuild only when the form validity or the loading changes
                     buildWhen: (previous, current) =>
+                        previous.isFormValid != current.isFormValid ||
                         previous is LoadingSignInState ||
                         current is LoadingSignInState,
                     builder: (context, state) {
                       final bool isLoading = state is LoadingSignInState;
 
                       return ElevatedButton(
-                        onPressed: isLoading
+                        // Enabled only when the form is valid and not loading
+                        onPressed: (!state.isFormValid || isLoading)
                             ? null
-                            : () {
-                                // Shows the errors under the fields if the data is not valid
-                                if (!formKey.currentState!.validate()) return;
-
-                                context.read<SignInViewModel>().onEvent(
+                            : () => viewModel.onEvent(
                                   SignInEvent(
                                     email: emailController.text.trim(),
                                     password: passwordController.text,
                                     rememberMe: rememberMe.value,
                                   ),
-                                );
-                              },
+                                ),
                         child: isLoading
                             ? const SizedBox(
                                 height: 20,
