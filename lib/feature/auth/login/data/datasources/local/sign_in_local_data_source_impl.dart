@@ -3,10 +3,10 @@ import 'package:exam_app_elevate/feature/auth/login/data/datasources/local/sign_
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 
-@Injectable(as:AuthLocalDataSource)
-class AuthLocalDataSourceImpl implements AuthLocalDataSource{
+@Injectable(as:SignInLocalDataSource)
+class SignInLocalDataSourceImpl implements SignInLocalDataSource{
   final FlutterSecureStorage _storage;
-  AuthLocalDataSourceImpl(this._storage);
+  SignInLocalDataSourceImpl(this._storage);
   //Token 
   @override
   Future<void> saveToken(String token) async {

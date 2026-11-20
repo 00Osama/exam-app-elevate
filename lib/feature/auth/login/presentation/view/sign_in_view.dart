@@ -20,16 +20,17 @@ class _SignInViewState extends State<SignInView> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  bool rememberMe = false;
-  bool hidePassword = true;
-  bool isFormValid = false;
-  bool isSubmitted = false;
+  // Each notifier rebuilds only the widget that listens to it
+  final hidePassword = ValueNotifier<bool>(true);
+  final rememberMe = ValueNotifier<bool>(false);
 
-  // Free the controllers when the screen is closed
+  // Free the controllers and notifiers when the screen is closed
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    hidePassword.dispose();
+    rememberMe.dispose();
     super.dispose();
   }
 
@@ -37,170 +38,170 @@ class _SignInViewState extends State<SignInView> {
   Widget build(BuildContext context) {
     return BlocProvider<SignInViewModel>(
       create: (context) => getIt<SignInViewModel>(),
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(title: const Text('Login'), centerTitle: true),
-          body: BlocConsumer<SignInViewModel, SignInStates>(
-            listener: (context, state) {
-              switch (state) {
-                case InitialSignInState():
-                case LoadingSignInState():
-                  break; // nothing to do
-                case SuccessSignInState():
-                  // Temporary navigation, will be replaced with go_router later
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => HomeView()),
-                  );
-                  break;
-                case ErrorSignInState():
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text(state.errMsg)));
-              }
-            },
-
-            builder: (context, state) {
-              final bool isLoading = state is LoadingSignInState;
-
-              return Form(
-                key: formKey,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                // Check the fields on every change to enable or disable the button
-                onChanged: () {
-                  final bool isValid =
-                      Validators.email(emailController.text) == null &&
-                      Validators.password(passwordController.text) == null;
-
-                  if (isValid != isFormValid) {
-                    setState(() => isFormValid = isValid);
-                  }
-                },
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 24,
-                  ),
-                  children: [
-                    // Email
-                    TextFormField(
-                      controller: emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      validator: Validators.email,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        hintText: 'Enter your email',
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Password
-                    TextFormField(
-                      controller: passwordController,
-                      obscureText: hidePassword,
-                      textInputAction: TextInputAction.done,
-                      validator: Validators.password,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        hintText: 'Enter your password',
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            hidePassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
-                          ),
-                          onPressed: () {
-                            setState(() => hidePassword = !hidePassword);
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Remember me and forget password
-                    Row(
-                      children: [
-                        Checkbox(
-                          value: rememberMe,
-                          onChanged: (value) {
-                            setState(() => rememberMe = value ?? false);
-                          },
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Remember me',
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                        const Spacer(),
-                        TextButton(
-                          onPressed: () {
-                            // TODO: go to forget password
-                          },
-                          child: const Text('Forget password?'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 48),
-
-                    // Login button, grey when the form is not valid or loading
-                    ElevatedButton(
-                      // Disabled while loading, or after a failed try until the form is valid
-                      onPressed: (isLoading || (isSubmitted && !isFormValid))
-                          ? null
-                          : () {
-                              setState(() => isSubmitted = true);
-
-                              // Shows the errors under the fields if the data is not valid
-                              if (!formKey.currentState!.validate()) return;
-
-                              context.read<SignInViewModel>().onEvent(
-                                SignInEvent(
-                                  email: emailController.text.trim(),
-                                  password: passwordController.text,
-                                  rememberMe: rememberMe,
-                                ),
-                              );
-                            },
-                      child: isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: AppColors.white,
-                              ),
-                            )
-                          : const Text('Login'),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Don't have an account? Sign up
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Don't have an account? ",
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            // TODO: go to sign up
-                          },
-                          style: TextButton.styleFrom(
-                            foregroundColor: AppColors.primary,
-                            textStyle: const TextStyle(
-                              fontSize: 16,
-                              decoration: TextDecoration.underline,
-                            ),
-                          ),
-                          child: const Text('Sign up'),
-                        ),
-                      ],
-                    ),
-                  ],
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Login'), centerTitle: true),
+        // Listens to state changes without rebuilding the screen
+        body: BlocListener<SignInViewModel, SignInStates>(
+          listener: (context, state) {
+            switch (state) {
+              case InitialSignInState():
+              case LoadingSignInState():
+                break; // nothing to do
+              case SuccessSignInState():
+                // Temporary navigation, will be replaced with go_router later
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => HomeView()),
+                );
+              case ErrorSignInState():
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(state.errMsg)));
+            }
+          },
+          child: SafeArea(
+            child: Form(
+              key: formKey,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: ListView(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 24,
                 ),
-              );
-            },
+                children: [
+                  // Email
+                  TextFormField(
+                    controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    validator: Validators.email,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      hintText: 'Enter your email',
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Password, only this field rebuilds when the eye icon is pressed
+                  ValueListenableBuilder<bool>(
+                    valueListenable: hidePassword,
+                    builder: (context, isHidden, child) {
+                      return TextFormField(
+                        controller: passwordController,
+                        obscureText: isHidden,
+                        textInputAction: TextInputAction.done,
+                        validator: Validators.password,
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          hintText: 'Enter your password',
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isHidden
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () =>
+                                hidePassword.value = !hidePassword.value,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Remember me and forget password
+                  Row(
+                    children: [
+                      // Only the checkbox rebuilds when it is pressed
+                      ValueListenableBuilder<bool>(
+                        valueListenable: rememberMe,
+                        builder: (context, isChecked, child) {
+                          return Checkbox(
+                            value: isChecked,
+                            onChanged: (value) =>
+                                rememberMe.value = value ?? false,
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Remember me',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () {
+                          // TODO: go to forget password
+                        },
+                        child: const Text('Forget password?'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 48),
+
+                  // Only the button rebuilds, when loading starts or ends
+                  BlocBuilder<SignInViewModel, SignInStates>(
+                    buildWhen: (previous, current) =>
+                        previous is LoadingSignInState ||
+                        current is LoadingSignInState,
+                    builder: (context, state) {
+                      final bool isLoading = state is LoadingSignInState;
+
+                      return ElevatedButton(
+                        onPressed: isLoading
+                            ? null
+                            : () {
+                                // Shows the errors under the fields if the data is not valid
+                                if (!formKey.currentState!.validate()) return;
+
+                                context.read<SignInViewModel>().onEvent(
+                                  SignInEvent(
+                                    email: emailController.text.trim(),
+                                    password: passwordController.text,
+                                    rememberMe: rememberMe.value,
+                                  ),
+                                );
+                              },
+                        child: isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColors.white,
+                                ),
+                              )
+                            : const Text('Login'),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Don't have an account? Sign up
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Don't have an account? ",
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // TODO: go to sign up
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: AppColors.primary,
+                          textStyle: const TextStyle(
+                            fontSize: 16,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                        child: const Text('Sign up'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

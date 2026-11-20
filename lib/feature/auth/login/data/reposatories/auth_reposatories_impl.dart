@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:exam_app_elevate/Config/BaseResponse/base_response.dart';
 import 'package:exam_app_elevate/feature/auth/login/data/datasources/local/sign_in_local_data_source.dart';
 import 'package:exam_app_elevate/feature/auth/login/data/datasources/remote/sign_in_remote_data_source.dart';
@@ -11,10 +9,10 @@ import 'package:injectable/injectable.dart';
 
 @Injectable(as: AuthReposatories)
 class AuthReposatoriesImpl implements AuthReposatories {
-  final AuthRemoteDataSource _authRemoteDataSource;
-  final AuthLocalDataSource _authLocalDataSource;
+  final SignInRemoteDataSource _signInRemoteDataSource;
+  final SignInLocalDataSource _signInLocalDataSource;
 
-  AuthReposatoriesImpl(this._authRemoteDataSource, this._authLocalDataSource);
+  AuthReposatoriesImpl(this._signInRemoteDataSource, this._signInLocalDataSource);
 
   @override
   Future<BaseResponse<SignInEntity>> signIn({
@@ -29,15 +27,14 @@ class AuthReposatoriesImpl implements AuthReposatories {
     );
 
     // 2- take the response from data source
-    final BaseResponse<SignInResponse> response = await _authRemoteDataSource
+    final BaseResponse<SignInResponse> response = await _signInRemoteDataSource
         .signIn(request: request);
     //3- save token and remember me
     if (response is SuccessBaseResponse<SignInResponse>) {
-        log("SignIn called", name: "signInRepo");
       final String? token = response.data.token;
       if (token != null) {
-        await _authLocalDataSource.saveToken(token);
-        await _authLocalDataSource.saveRememberMe(rememberMe);
+        await _signInLocalDataSource.saveToken(token);
+        await _signInLocalDataSource.saveRememberMe(rememberMe);
       }
     }
     //4-convert to entity if success / convert error message if error
@@ -54,8 +51,8 @@ class AuthReposatoriesImpl implements AuthReposatories {
 Future<bool> isLoggedIn() async {
   try {
     // 1- get remember me and token
-    final bool rememberMe = await _authLocalDataSource.getRememberMe();
-    final String? token = await _authLocalDataSource.getToken();
+    final bool rememberMe = await _signInLocalDataSource.getRememberMe();
+    final String? token = await _signInLocalDataSource.getToken();
 
     // 2- token not null and remember me = true => logged in => go to home
     if (token != null && rememberMe) {
@@ -63,10 +60,9 @@ Future<bool> isLoggedIn() async {
     }
 
     // 3- otherwise clear storage => go to login
-    await _authLocalDataSource.clear();
+    await _signInLocalDataSource.clear();
     return false;
   } catch (e) {
-    log('isLoggedIn failed: $e', name: 'AuthRepository');
     return false;
   }
 }

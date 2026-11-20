@@ -1,4 +1,4 @@
-abstract class AuthLocalDataSource {
+abstract interface class SignInLocalDataSource {
   //Token
   Future<void> saveToken(String token);
   Future<String?> getToken();

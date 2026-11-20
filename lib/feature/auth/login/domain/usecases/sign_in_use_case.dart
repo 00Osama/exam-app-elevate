@@ -14,7 +14,6 @@ Future<BaseResponse<SignInEntity>> call({
   required String password,
   required bool rememberMe,
 }) {
-    log("SignIn called", name: "signInUseCase");
     return _authReposatories.signIn(
       email: email,
       password: password,

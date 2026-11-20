@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:exam_app_elevate/Config/BaseResponse/base_response.dart';
 import 'package:exam_app_elevate/feature/auth/login/domain/entity/sign_in_entity.dart';
 import 'package:exam_app_elevate/feature/auth/login/domain/usecases/sign_in_use_case.dart';
@@ -17,7 +15,6 @@ class SignInViewModel extends Cubit<SignInStates> {
   void onEvent(SignInEvents event) {
   switch (event) {
     case SignInEvent():
-        log("SignIn called", name: "signInViewModel");
       _signIn(
         email: event.email,
         password: event.password,
