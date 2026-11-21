@@ -2,10 +2,10 @@ import 'package:exam_app_elevate/config/di/di.dart';
 import 'package:exam_app_elevate/core/constants/app_strings.dart';
 import 'package:exam_app_elevate/core/theme/app_colors.dart';
 import 'package:exam_app_elevate/core/utils/validators.dart';
-import 'package:exam_app_elevate/feature/auth/login/presentation/view_model/sign_in_cubit.dart';
-import 'package:exam_app_elevate/feature/auth/login/presentation/view_model/sign_in_events.dart';
-import 'package:exam_app_elevate/feature/auth/login/presentation/view_model/sign_in_states.dart';
-import 'package:exam_app_elevate/feature/home/home_view.dart';
+import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_cubit.dart';
+import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_events.dart';
+import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_states.dart';
+import 'package:exam_app_elevate/features/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

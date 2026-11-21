@@ -1,9 +1,9 @@
 import 'package:exam_app_elevate/config/base_response/base_response.dart';
 import 'package:exam_app_elevate/core/utils/validators.dart';
-import 'package:exam_app_elevate/feature/auth/login/domain/entity/sign_in_entity.dart';
-import 'package:exam_app_elevate/feature/auth/login/domain/use_cases/sign_in_use_case.dart';
-import 'package:exam_app_elevate/feature/auth/login/presentation/view_model/sign_in_events.dart';
-import 'package:exam_app_elevate/feature/auth/login/presentation/view_model/sign_in_states.dart';
+import 'package:exam_app_elevate/features/auth/login/domain/entity/sign_in_entity.dart';
+import 'package:exam_app_elevate/features/auth/login/domain/use_cases/sign_in_use_case.dart';
+import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_events.dart';
+import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 

@@ -1,5 +1,5 @@
 // user_model.dart
-import 'package:exam_app_elevate/feature/auth/login/domain/entity/user_entity.dart';
+import 'package:exam_app_elevate/features/auth/login/domain/entity/user_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_model.g.dart';

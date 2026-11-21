@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:exam_app_elevate/core/constants/app_end_points.dart';
-import 'package:exam_app_elevate/feature/auth/login/data/models/sign_in_request.dart';
-import 'package:exam_app_elevate/feature/auth/login/data/models/sign_in_response.dart';
+import 'package:exam_app_elevate/features/auth/login/data/models/sign_in_request.dart';
+import 'package:exam_app_elevate/features/auth/login/data/models/sign_in_response.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
