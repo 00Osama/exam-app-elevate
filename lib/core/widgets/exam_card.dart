@@ -1,6 +1,5 @@
 // ignore: deprecated_member_use
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 enum ExamCardType { selection, result }

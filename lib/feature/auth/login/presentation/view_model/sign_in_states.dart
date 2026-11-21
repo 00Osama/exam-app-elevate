@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:exam_app_elevate/Config/Base%20State/base_state.dart';
+import 'package:exam_app_elevate/config/base_state/base_state.dart';
 import 'package:exam_app_elevate/feature/auth/login/domain/entity/sign_in_entity.dart';
 
 class SignInState extends Equatable {

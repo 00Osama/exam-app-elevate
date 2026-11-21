@@ -1,18 +1,18 @@
-import 'package:exam_app_elevate/Config/BaseResponse/base_response.dart';
-import 'package:exam_app_elevate/feature/auth/login/data/datasources/local/sign_in_local_data_source.dart';
-import 'package:exam_app_elevate/feature/auth/login/data/datasources/remote/sign_in_remote_data_source.dart';
+import 'package:exam_app_elevate/config/base_response/base_response.dart';
+import 'package:exam_app_elevate/feature/auth/login/data/data_sources/local/sign_in_local_data_source.dart';
+import 'package:exam_app_elevate/feature/auth/login/data/data_sources/remote/sign_in_remote_data_source.dart';
 import 'package:exam_app_elevate/feature/auth/login/data/models/sign_in_request.dart';
 import 'package:exam_app_elevate/feature/auth/login/data/models/sign_in_response.dart';
 import 'package:exam_app_elevate/feature/auth/login/domain/entity/sign_in_entity.dart';
-import 'package:exam_app_elevate/feature/auth/login/domain/reposatories/sign_in_reposatories.dart';
+import 'package:exam_app_elevate/feature/auth/login/domain/reposatorie/sign_in_reposatories.dart';
 import 'package:injectable/injectable.dart';
 
-@Injectable(as: AuthReposatories)
-class AuthReposatoriesImpl implements AuthReposatories {
+@Injectable(as: SignInReposatorie)
+class SignInReposatorieImpl implements SignInReposatorie {
   final SignInRemoteDataSource _signInRemoteDataSource;
   final SignInLocalDataSource _signInLocalDataSource;
 
-  AuthReposatoriesImpl(this._signInRemoteDataSource, this._signInLocalDataSource);
+  SignInReposatorieImpl(this._signInRemoteDataSource, this._signInLocalDataSource);
 
   @override
   Future<BaseResponse<SignInEntity>> signIn({

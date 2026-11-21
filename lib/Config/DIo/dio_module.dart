@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:exam_app_elevate/Config/Constants/app_end_points.dart';
+import 'package:exam_app_elevate/config/Constants/app_end_points.dart';
 import 'package:injectable/injectable.dart';
 
 

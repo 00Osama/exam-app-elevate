@@ -15,7 +15,6 @@ class BaseState<T> {
     );
   }
 
-  @override
   List<Object?> get props => [isLoading, errMsg, data];
 
 }

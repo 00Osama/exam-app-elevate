@@ -1,4 +1,4 @@
-import 'package:exam_app_elevate/Config/Di/di.dart';
+import 'package:exam_app_elevate/config/di/di.dart';
 import 'package:exam_app_elevate/core/theme/light_theme.dart';
 import 'package:exam_app_elevate/feature/auth/login/presentation/view/sign_in_view.dart';
 // ignore: deprecated_member_use
