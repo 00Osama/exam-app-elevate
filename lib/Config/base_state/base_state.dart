@@ -5,15 +5,16 @@ class BaseState<T> {
 
   const BaseState({this.isLoading = false, this.errMsg, this.data});
 
-  BaseState<T> copyWith({
-    bool? isLoading,
-    String? errMsg,
-    T? data,
-  }) {
+    // Returns a copy, changing only the given fields
+  // The error is cleared unless a new one is given
+  BaseState<T> copyWith({bool? isLoading, String? errMsg, T? data}) {
     return BaseState<T>(
       isLoading: isLoading ?? this.isLoading,
-      errMsg: errMsg ?? this.errMsg,
+      errMsg: errMsg,
       data: data ?? this.data,
     );
   }
+
+  List<Object?> get props => [isLoading, errMsg, data];
+
 }

@@ -32,6 +32,11 @@ dependencies:
   flutter_svg: ^2.4.0
   flutter_launcher_icons: ^0.14.4
 
+  # Storage 
+  flutter_secure_storage:
+  
+  equatable:
+
   material_ui: any
 dev_dependencies:
   flutter_test:

@@ -1,0 +1,33 @@
+import 'package:equatable/equatable.dart';
+
+class UserEntity extends Equatable {
+  final String id;
+  final String username;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String phone;
+  final bool isVerified;
+
+  const UserEntity({
+    required this.id,
+    required this.username,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.phone,
+    required this.isVerified,
+  });
+
+  // Fields used to compare two objects
+  @override
+  List<Object?> get props => [
+        id,
+        username,
+        firstName,
+        lastName,
+        email,
+        phone,
+        isVerified,
+      ];
+}
