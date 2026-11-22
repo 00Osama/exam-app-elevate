@@ -5,6 +5,7 @@ import 'package:exam_app_elevate/core/utils/validators.dart';
 import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_cubit.dart';
 import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_events.dart';
 import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_states.dart';
+import 'package:exam_app_elevate/features/auth/sign_up/presentation/view/sign_up_view.dart';
 import 'package:exam_app_elevate/features/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -195,7 +196,11 @@ class _SignInViewState extends State<SignInView> {
                         ),
                         TextButton(
                           onPressed: () {
-                            // TODO: go to sign up
+                            // Temporary navigation, will be replaced with go_router later
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (_) => SignUpView()),
+                            );
                           },
                           style: TextButton.styleFrom(
                             foregroundColor: AppColors.primary,
