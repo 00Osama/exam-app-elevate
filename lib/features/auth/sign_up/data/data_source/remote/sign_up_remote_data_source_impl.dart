@@ -4,7 +4,8 @@ import 'package:exam_app_elevate/features/auth/models/auth_response_model.dart';
 import 'package:exam_app_elevate/features/auth/sign_up/data/data_source/remote/sign_up_remote_data_source.dart';
 import 'package:exam_app_elevate/features/auth/sign_up/data/models/sign_up_request.dart';
 import 'package:exam_app_elevate/features/auth/sign_up/data/sign_up_api_client/sign_up_api_client.dart';
-
+import 'package:injectable/injectable.dart';
+@Injectable(as: SignUpRemoteDataSource)
 class SignUpRemoteDataSourceImpl implements SignUpRemoteDataSource {
   final SignUpApiClient _signUpApiClient;
 
