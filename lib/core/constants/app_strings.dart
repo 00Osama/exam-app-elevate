@@ -10,8 +10,14 @@ abstract class AppStrings {
   static const String dontHaveAccount = "Don't have an account? ";
   static const String signUp = 'Sign up';
 
-  // Validation
+  // sign in Validation
   static const String emailRequired = 'Email is required';
   static const String emailNotValid = 'This Email is not valid';
   static const String passwordRequired = 'Password is required';
+  // Sign up validation
+  static const String usernameRequired = 'Username is required';
+  static const String nameRequired = 'This field is required';
+  static const String phoneRequired = 'Phone is required';
+  static const String phoneNotValid = 'Phone number is not valid';
+  static const String passwordsNotMatch = 'Passwords do not match';
 }
