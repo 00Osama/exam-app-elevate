@@ -1,21 +1,21 @@
 import 'package:exam_app_elevate/config/base_response/base_response.dart';
+import 'package:exam_app_elevate/features/auth/entity/auth_entity.dart';
 import 'package:exam_app_elevate/features/auth/login/data/data_sources/local/sign_in_local_data_source.dart';
 import 'package:exam_app_elevate/features/auth/login/data/data_sources/remote/sign_in_remote_data_source.dart';
 import 'package:exam_app_elevate/features/auth/login/data/models/sign_in_request.dart';
-import 'package:exam_app_elevate/features/auth/login/domain/entity/sign_in_entity.dart';
-import 'package:exam_app_elevate/features/auth/login/domain/reposatorie/sign_in_reposatories.dart';
+import 'package:exam_app_elevate/features/auth/login/domain/reposatorie/sign_in_reposatorie.dart';
 import 'package:exam_app_elevate/features/auth/models/auth_response_model.dart';
 import 'package:injectable/injectable.dart';
 
 @Injectable(as: SignInReposatorie)
-class SignInReposatorieImpl implements SignInReposatorie {
+class SignInReposatorieImpl implements SignInReposatorie{
   final SignInRemoteDataSource _signInRemoteDataSource;
   final SignInLocalDataSource _signInLocalDataSource;
 
   SignInReposatorieImpl(this._signInRemoteDataSource, this._signInLocalDataSource);
 
   @override
-  Future<BaseResponse<SignInEntity>> signIn({
+  Future<BaseResponse<AuthEntity>> signIn({
     required String email,
     required String password,
     required bool rememberMe,
@@ -41,9 +41,9 @@ class SignInReposatorieImpl implements SignInReposatorie {
     return switch (response) {
       SuccessBaseResponse<AuthResponseModel>(:final data) =>
         // 5- convert model to entity
-        SuccessBaseResponse<SignInEntity>(data: data.toDomain()),
+        SuccessBaseResponse<AuthEntity>(data: data.toDomain()),
       ErrorBaseResponse<AuthResponseModel>(:final errMessage) =>
-        ErrorBaseResponse<SignInEntity>.fromErrorMsg(errMessage),
+        ErrorBaseResponse<AuthEntity>.fromErrorMsg(errMessage),
     };
   }
 

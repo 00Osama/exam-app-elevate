@@ -1,5 +1,5 @@
+import 'package:exam_app_elevate/features/auth/entity/auth_entity.dart';
 import 'package:exam_app_elevate/features/auth/models/user_model.dart';
-import 'package:exam_app_elevate/features/auth/login/domain/entity/sign_in_entity.dart';
 import 'package:exam_app_elevate/features/auth/login/domain/entity/user_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -14,8 +14,8 @@ class AuthResponseModel {
 
   const AuthResponseModel({this.message, this.code, this.token, this.user});
 //mapper 
-SignInEntity toDomain() {
-  return SignInEntity(
+ AuthEntity toDomain() {
+  return AuthEntity(
     token: token ?? '',
     user: user?.toDomain() ??
         const UserEntity(
@@ -24,6 +24,9 @@ SignInEntity toDomain() {
         ),
   );
 }
+
+
+
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) =>
       _$AuthResponseModelFromJson(json);
 

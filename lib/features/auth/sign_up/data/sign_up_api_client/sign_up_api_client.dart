@@ -15,5 +15,5 @@ abstract class SignUpApiClient {
   factory SignUpApiClient(Dio dio) = _SignUpApiClient;
 
   @POST(AppEndPoints.signUp)
-   Future<AuthResponseModel> signIn(@Body() SignUpRequest request);
+   Future<AuthResponseModel> signUp(@Body() SignUpRequest request);
   }
