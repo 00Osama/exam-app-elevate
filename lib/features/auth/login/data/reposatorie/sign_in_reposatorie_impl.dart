@@ -2,9 +2,9 @@ import 'package:exam_app_elevate/config/base_response/base_response.dart';
 import 'package:exam_app_elevate/features/auth/login/data/data_sources/local/sign_in_local_data_source.dart';
 import 'package:exam_app_elevate/features/auth/login/data/data_sources/remote/sign_in_remote_data_source.dart';
 import 'package:exam_app_elevate/features/auth/login/data/models/sign_in_request.dart';
-import 'package:exam_app_elevate/features/auth/login/data/models/sign_in_response.dart';
 import 'package:exam_app_elevate/features/auth/login/domain/entity/sign_in_entity.dart';
 import 'package:exam_app_elevate/features/auth/login/domain/reposatorie/sign_in_reposatories.dart';
+import 'package:exam_app_elevate/features/auth/models/auth_response_model.dart';
 import 'package:injectable/injectable.dart';
 
 @Injectable(as: SignInReposatorie)
@@ -27,10 +27,10 @@ class SignInReposatorieImpl implements SignInReposatorie {
     );
 
     // 2- take the response from data source
-    final BaseResponse<SignInResponse> response = await _signInRemoteDataSource
+    final BaseResponse<AuthResponseModel> response = await _signInRemoteDataSource
         .signIn(request: request);
     //3- save token and remember me
-    if (response is SuccessBaseResponse<SignInResponse>) {
+    if (response is SuccessBaseResponse<AuthResponseModel>) {
       final String? token = response.data.token;
       if (token != null) {
         await _signInLocalDataSource.saveToken(token);
@@ -39,10 +39,10 @@ class SignInReposatorieImpl implements SignInReposatorie {
     }
     //4-convert to entity if success / convert error message if error
     return switch (response) {
-      SuccessBaseResponse<SignInResponse>(:final data) =>
+      SuccessBaseResponse<AuthResponseModel>(:final data) =>
         // 5- convert model to entity
         SuccessBaseResponse<SignInEntity>(data: data.toDomain()),
-      ErrorBaseResponse<SignInResponse>(:final errMessage) =>
+      ErrorBaseResponse<AuthResponseModel>(:final errMessage) =>
         ErrorBaseResponse<SignInEntity>.fromErrorMsg(errMessage),
     };
   }

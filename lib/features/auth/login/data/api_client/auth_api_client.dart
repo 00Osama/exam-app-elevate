@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:exam_app_elevate/core/constants/app_end_points.dart';
 import 'package:exam_app_elevate/features/auth/login/data/models/sign_in_request.dart';
-import 'package:exam_app_elevate/features/auth/login/data/models/sign_in_response.dart';
+import 'package:exam_app_elevate/features/auth/models/auth_response_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -15,5 +15,5 @@ abstract class AuthApiClient {
   factory AuthApiClient(Dio dio) = _AuthApiClient;
 
   @POST(AppEndPoints.signIn)
-  Future<SignInResponse> signIn(@Body() SignInRequest request);
+  Future<AuthResponseModel> signIn(@Body() SignInRequest request);
 }
