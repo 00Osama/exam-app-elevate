@@ -1,7 +1,9 @@
-// ignore: deprecated_member_use
-import 'package:exam_app_elevate/features/home/home_view.dart';
+import 'package:exam_app_elevate/config/di/di.dart';
+import 'package:exam_app_elevate/core/constants/app_routes.dart';
+import 'package:exam_app_elevate/core/theme/app_colors.dart';
+import 'package:exam_app_elevate/features/auth/login/domain/use_cases/is_logged_in_use_case.dart';
 import 'package:exam_app_elevate/gen/assets.gen.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -34,22 +36,18 @@ class _SplashViewState extends State<SplashView>
     );
 
     _controller.forward();
-    _navigateToHome();
-  }
 
-  Future<void> _navigateToHome() async {
-    await Future<void>.delayed(const Duration(seconds: 3));
-    if (!mounted) return;
+    final Future<bool> isLoggedInFuture = getIt<IsLoggedInUseCase>()();
 
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder<void>(
-        pageBuilder: (_, _, _) => HomeView(),
-        transitionsBuilder: (_, animation, _, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-        transitionDuration: const Duration(milliseconds: 500),
-      ),
-    );
+    Future<void>.delayed(const Duration(seconds: 3)).then((_) async {
+      final bool isLoggedIn = await isLoggedInFuture;
+      if (!mounted) return;
+
+      Navigator.pushReplacementNamed(
+        context,
+        isLoggedIn ? AppRoutes.home : AppRoutes.signIn,
+      );
+    });
   }
 
   @override
@@ -61,7 +59,7 @@ class _SplashViewState extends State<SplashView>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.white,
       body: Center(
         child: FadeTransition(
           opacity: _fadeAnimation,
