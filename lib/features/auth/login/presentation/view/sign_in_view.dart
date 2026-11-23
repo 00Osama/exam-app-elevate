@@ -197,7 +197,7 @@ class _SignInViewState extends State<SignInView> {
                         TextButton(
                           onPressed: () {
                             // Temporary navigation, will be replaced with go_router later
-                            Navigator.pushReplacement(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(builder: (_) => SignUpView()),
                             );

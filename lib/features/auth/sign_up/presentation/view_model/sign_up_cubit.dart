@@ -1,9 +1,11 @@
 import 'package:exam_app_elevate/config/base_response/base_response.dart';
 import 'package:exam_app_elevate/core/utils/validators.dart';
 import 'package:exam_app_elevate/features/auth/entity/auth_entity.dart';
+import 'package:exam_app_elevate/features/auth/sign_up/domain/entity/sign_up_param.dart';
 import 'package:exam_app_elevate/features/auth/sign_up/domain/use_cases/sign_up_use_case.dart';
 import 'package:exam_app_elevate/features/auth/sign_up/presentation/view_model/sign_up_events.dart';
 import 'package:exam_app_elevate/features/auth/sign_up/presentation/view_model/sign_up_states.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -12,55 +14,43 @@ class SignUpViewModel extends Cubit<SignUpState> {
   final SignUpUseCase _signUpUseCase;
   SignUpViewModel(this._signUpUseCase) : super(const SignUpState());
 
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController rePasswordController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+
+    // Builds the params from the current text field values.
+  SignUpParams get params => SignUpParams(
+        username: usernameController.text.trim(),
+        firstName: firstNameController.text.trim(),
+        lastName: lastNameController.text.trim(),
+        email: emailController.text.trim(),
+        password: passwordController.text,
+        rePassword: rePasswordController.text,
+        phone: phoneController.text.trim(),
+      );
+
   void onEvent(SignUpEvents event) {
     switch (event) {
       case SignUpEvent():
-        _signUp(
-          username: event.username,
-          firstName: event.firstName,
-          lastName: event.lastName,
-          email: event.email,
-          password: event.password,
-          rePassword: event.rePassword,
-          phone: event.phone,
-        );
+        _signUp();
       case SignUpFormChangedEvent():
-        _onFormChanged(
-          username: event.username,
-          firstName: event.firstName,
-          lastName: event.lastName,
-          email: event.email,
-          password: event.password,
-          rePassword: event.rePassword,
-          phone: event.phone,
-        );
+        _onFormChanged();
     }
   }
 
-  Future<void> _signUp({
-    required String username,
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String password,
-    required String rePassword,
-    required String phone,
-  }) async {
-    //start loading
+  Future<void> _signUp() async {
+    // Start loading.
     emit(
       state.copyWith(signUpState: state.signUpState.copyWith(isLoading: true)),
     );
 
-    final BaseResponse<AuthEntity> apiResult = await _signUpUseCase(
-      username: username,
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      password: password,
-      rePassword: rePassword,
-      phone: phone,
-    );
+    final BaseResponse<AuthEntity> apiResult = await _signUpUseCase(params);
 
+    // Stop if the screen was closed 
     if (isClosed) return;
 
     switch (apiResult) {
@@ -85,23 +75,33 @@ class SignUpViewModel extends Cubit<SignUpState> {
     }
   }
 
-  void _onFormChanged({
-    required String username,
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String password,
-    required String rePassword,
-    required String phone,
-  }) {
+  void _onFormChanged() {
+    // Read the values once, then check every field.
+    final SignUpParams current = params;
+
     final bool isValid =
-        AppValidators.username(username) == null &&
-        AppValidators.name(firstName) == null &&
-        AppValidators.name(lastName) == null &&
-        AppValidators.email(email) == null &&
-        AppValidators.password(password) == null &&
-        AppValidators.confirmPassword(rePassword, password) == null &&
-        AppValidators.phone(phone) == null;
+        AppValidators.username(current.username) == null &&
+        AppValidators.name(current.firstName) == null &&
+        AppValidators.name(current.lastName) == null &&
+        AppValidators.email(current.email) == null &&
+        AppValidators.password(current.password) == null &&
+        AppValidators.confirmPassword(current.rePassword, current.password) ==
+            null &&
+        AppValidators.phone(current.phone) == null;
+
     emit(state.copyWith(isFormValid: isValid));
+  }
+
+  @override
+  Future<void> close() {
+    // Dispose controllers to avoid memory leaks.
+    usernameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    rePasswordController.dispose();
+    phoneController.dispose();
+    return super.close();
   }
 }

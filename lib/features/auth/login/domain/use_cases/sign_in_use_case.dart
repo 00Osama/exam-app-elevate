@@ -5,14 +5,14 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class SignInUseCase {
-  final SignInReposatorie _signInReposatories;
-  SignInUseCase(this._signInReposatories);
+  final SignInReposatory _signInReposatorys;
+  SignInUseCase(this._signInReposatorys);
 Future<BaseResponse<AuthEntity>> call({
   required String email,
   required String password,
   required bool rememberMe,
 }) {
-    return _signInReposatories.signIn(
+    return _signInReposatorys.signIn(
       email: email,
       password: password,
       rememberMe: rememberMe,

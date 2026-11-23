@@ -1,15 +1,7 @@
 import 'package:exam_app_elevate/config/base_response/base_response.dart';
 import 'package:exam_app_elevate/features/auth/entity/auth_entity.dart';
+import 'package:exam_app_elevate/features/auth/sign_up/domain/entity/sign_up_param.dart';
 
-abstract interface class SignUpReposatorie {
-  Future<BaseResponse<AuthEntity>> signUp({
-    required String username,
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String password,
-    required String rePassword,
-    required String phone,
-  });
-
+abstract interface class SignUpReposatory {
+  Future<BaseResponse<AuthEntity>> signUp({required SignUpParams params});
 }

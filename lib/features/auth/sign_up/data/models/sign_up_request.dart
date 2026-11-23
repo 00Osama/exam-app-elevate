@@ -1,3 +1,4 @@
+import 'package:exam_app_elevate/features/auth/sign_up/domain/entity/sign_up_param.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'sign_up_request.g.dart';
@@ -26,4 +27,18 @@ class SignUpRequest {
       _$SignUpRequestFromJson(json);
 
   Map<String, dynamic> toJson() => _$SignUpRequestToJson(this);
+}
+  // Converts the domain params into the request model sent to the API.
+extension SignUpParamsMapper on SignUpParams {
+  SignUpRequest toRequest() {
+    return SignUpRequest(
+      username: username,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      password: password,
+      rePassword: rePassword,
+      phone: phone,
+    );
+  }
 }

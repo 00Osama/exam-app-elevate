@@ -7,12 +7,15 @@ import 'package:exam_app_elevate/features/auth/login/domain/reposatorie/sign_in_
 import 'package:exam_app_elevate/features/auth/models/auth_response_model.dart';
 import 'package:injectable/injectable.dart';
 
-@Injectable(as: SignInReposatorie)
-class SignInReposatorieImpl implements SignInReposatorie{
+@Injectable(as: SignInReposatory)
+class SignInReposatoryImpl implements SignInReposatory {
   final SignInRemoteDataSource _signInRemoteDataSource;
   final SignInLocalDataSource _signInLocalDataSource;
 
-  SignInReposatorieImpl(this._signInRemoteDataSource, this._signInLocalDataSource);
+  SignInReposatoryImpl(
+    this._signInRemoteDataSource,
+    this._signInLocalDataSource,
+  );
 
   @override
   Future<BaseResponse<AuthEntity>> signIn({
@@ -27,8 +30,8 @@ class SignInReposatorieImpl implements SignInReposatorie{
     );
 
     // 2- take the response from data source
-    final BaseResponse<AuthResponseModel> response = await _signInRemoteDataSource
-        .signIn(request: request);
+    final BaseResponse<AuthResponseModel> response =
+        await _signInRemoteDataSource.signIn(request: request);
     //3- save token and remember me
     if (response is SuccessBaseResponse<AuthResponseModel>) {
       final String? token = response.data.token;
@@ -47,23 +50,23 @@ class SignInReposatorieImpl implements SignInReposatorie{
     };
   }
 
-@override
-Future<bool> isLoggedIn() async {
-  try {
-    // 1- get remember me and token
-    final bool rememberMe = await _signInLocalDataSource.getRememberMe();
-    final String? token = await _signInLocalDataSource.getToken();
+  @override
+  Future<bool> isLoggedIn() async {
+    try {
+      // 1- get remember me and token
+      final bool rememberMe = await _signInLocalDataSource.getRememberMe();
+      final String? token = await _signInLocalDataSource.getToken();
 
-    // 2- token not null and remember me = true => logged in => go to home
-    if (token != null && rememberMe) {
-      return true;
+      // 2- token not null and remember me = true => logged in => go to home
+      if (token != null && rememberMe) {
+        return true;
+      }
+
+      // 3- otherwise clear storage => go to login
+      await _signInLocalDataSource.clear();
+      return false;
+    } catch (e) {
+      return false;
     }
-
-    // 3- otherwise clear storage => go to login
-    await _signInLocalDataSource.clear();
-    return false;
-  } catch (e) {
-    return false;
   }
 }
-  }
