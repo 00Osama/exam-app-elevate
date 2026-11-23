@@ -1,6 +1,6 @@
 // ignore: deprecated_member_use
+import 'package:exam_app_elevate/features/forget_password/presentation/views/send_email_view.dart';
 import 'package:exam_app_elevate/gen/assets.gen.dart';
-import 'package:exam_app_elevate/main.dart';
 import 'package:material_ui/material_ui.dart';
 
 class SplashView extends StatefulWidget {
@@ -43,7 +43,7 @@ class _SplashViewState extends State<SplashView>
 
     Navigator.of(context).pushReplacement(
       PageRouteBuilder<void>(
-        pageBuilder: (_, _, _) => const HomeView(),
+        pageBuilder: (_, _, _) => const ForgetPasswordView(),
         transitionsBuilder: (_, animation, _, child) {
           return FadeTransition(opacity: animation, child: child);
         },
