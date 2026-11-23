@@ -1,4 +1,5 @@
 import 'package:exam_app_elevate/config/di/di.dart';
+import 'package:exam_app_elevate/core/constants/app_routes.dart';
 import 'package:exam_app_elevate/core/constants/app_strings.dart';
 import 'package:exam_app_elevate/core/theme/app_colors.dart';
 import 'package:exam_app_elevate/core/utils/validators.dart';
@@ -51,11 +52,7 @@ class _SignInViewState extends State<SignInView> {
                 previous.signInState != current.signInState,
             listener: (context, state) {
               if (state.signInState.data != null) {
-                // Temporary navigation, will be replaced with go_router later
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => HomeView()),
-                );
+               Navigator.pushReplacementNamed(context, AppRoutes.home);
               }
               if (state.signInState.errMsg != null) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -196,11 +193,7 @@ class _SignInViewState extends State<SignInView> {
                         ),
                         TextButton(
                           onPressed: () {
-                            // Temporary navigation, will be replaced with go_router later
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => SignUpView()),
-                            );
+                          Navigator.pushNamed(context, AppRoutes.signUp);
                           },
                           style: TextButton.styleFrom(
                             foregroundColor: AppColors.primary,
