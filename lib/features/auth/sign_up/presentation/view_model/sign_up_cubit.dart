@@ -5,52 +5,49 @@ import 'package:exam_app_elevate/features/auth/sign_up/domain/entity/sign_up_par
 import 'package:exam_app_elevate/features/auth/sign_up/domain/use_cases/sign_up_use_case.dart';
 import 'package:exam_app_elevate/features/auth/sign_up/presentation/view_model/sign_up_events.dart';
 import 'package:exam_app_elevate/features/auth/sign_up/presentation/view_model/sign_up_states.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
 class SignUpViewModel extends Cubit<SignUpState> {
   final SignUpUseCase _signUpUseCase;
+
   SignUpViewModel(this._signUpUseCase) : super(const SignUpState());
 
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController firstNameController = TextEditingController();
-  final TextEditingController lastNameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController rePasswordController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
-
-    // Builds the params from the current text field values.
-  SignUpParams get params => SignUpParams(
-        username: usernameController.text.trim(),
-        firstName: firstNameController.text.trim(),
-        lastName: lastNameController.text.trim(),
-        email: emailController.text.trim(),
-        password: passwordController.text,
-        rePassword: rePasswordController.text,
-        phone: phoneController.text.trim(),
-      );
-
+  // The only entry point for the view
   void onEvent(SignUpEvents event) {
     switch (event) {
       case SignUpEvent():
-        _signUp();
+        _signUp(event.params);
       case SignUpFormChangedEvent():
-        _onFormChanged();
+        _onFormChanged(event.params);
     }
   }
 
-  Future<void> _signUp() async {
-    // Start loading.
+  // Checks all fields, Equatable stops the emit if nothing changed
+  void _onFormChanged(SignUpParams params) {
+    final bool isValid =
+        AppValidators.username(params.username) == null &&
+        AppValidators.name(params.firstName) == null &&
+        AppValidators.name(params.lastName) == null &&
+        AppValidators.email(params.email) == null &&
+        AppValidators.password(params.password) == null &&
+        AppValidators.confirmPassword(params.rePassword, params.password) ==
+            null &&
+        AppValidators.phone(params.phone) == null;
+
+    emit(state.copyWith(isFormValid: isValid));
+  }
+
+  Future<void> _signUp(SignUpParams params) async {
+    // Start loading, the old error is cleared
     emit(
       state.copyWith(signUpState: state.signUpState.copyWith(isLoading: true)),
     );
 
-    final BaseResponse<AuthEntity> apiResult = await _signUpUseCase(params);
+   final BaseResponse<AuthEntity> apiResult = await _signUpUseCase(params);
 
-    // Stop if the screen was closed 
+    // Stop if the screen was closed while waiting
     if (isClosed) return;
 
     switch (apiResult) {
@@ -73,35 +70,5 @@ class SignUpViewModel extends Cubit<SignUpState> {
           ),
         );
     }
-  }
-
-  void _onFormChanged() {
-    // Read the values once, then check every field.
-    final SignUpParams current = params;
-
-    final bool isValid =
-        AppValidators.username(current.username) == null &&
-        AppValidators.name(current.firstName) == null &&
-        AppValidators.name(current.lastName) == null &&
-        AppValidators.email(current.email) == null &&
-        AppValidators.password(current.password) == null &&
-        AppValidators.confirmPassword(current.rePassword, current.password) ==
-            null &&
-        AppValidators.phone(current.phone) == null;
-
-    emit(state.copyWith(isFormValid: isValid));
-  }
-
-  @override
-  Future<void> close() {
-    // Dispose controllers to avoid memory leaks.
-    usernameController.dispose();
-    firstNameController.dispose();
-    lastNameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    rePasswordController.dispose();
-    phoneController.dispose();
-    return super.close();
   }
 }
