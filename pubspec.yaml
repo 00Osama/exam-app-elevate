@@ -35,6 +35,10 @@ dependencies:
   # Storage 
   flutter_secure_storage:
   
+  # router
+  go_router: ^18.1.4
+
+  
   equatable:
 
   material_ui: any
