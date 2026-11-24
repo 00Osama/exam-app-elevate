@@ -1,10 +1,12 @@
 import 'package:exam_app_elevate/config/di/di.dart';
+import 'package:exam_app_elevate/core/constants/app_routes.dart';
 import 'package:exam_app_elevate/core/constants/app_strings.dart';
 import 'package:exam_app_elevate/core/theme/app_colors.dart';
 import 'package:exam_app_elevate/core/utils/validators.dart';
 import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_cubit.dart';
 import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_events.dart';
 import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_states.dart';
+import 'package:exam_app_elevate/features/auth/sign_up/presentation/view/sign_up_view.dart';
 import 'package:exam_app_elevate/features/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,11 +52,7 @@ class _SignInViewState extends State<SignInView> {
                 previous.signInState != current.signInState,
             listener: (context, state) {
               if (state.signInState.data != null) {
-                // Temporary navigation, will be replaced with go_router later
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (_) => HomeView()),
-                );
+               Navigator.pushReplacementNamed(context, AppRoutes.home);
               }
               if (state.signInState.errMsg != null) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -195,7 +193,7 @@ class _SignInViewState extends State<SignInView> {
                         ),
                         TextButton(
                           onPressed: () {
-                            // TODO: go to sign up
+                          Navigator.pushNamed(context, AppRoutes.signUp);
                           },
                           style: TextButton.styleFrom(
                             foregroundColor: AppColors.primary,

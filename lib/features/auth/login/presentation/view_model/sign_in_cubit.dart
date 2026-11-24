@@ -1,6 +1,6 @@
 import 'package:exam_app_elevate/config/base_response/base_response.dart';
 import 'package:exam_app_elevate/core/utils/validators.dart';
-import 'package:exam_app_elevate/features/auth/login/domain/entity/sign_in_entity.dart';
+import 'package:exam_app_elevate/features/auth/entity/auth_entity.dart';
 import 'package:exam_app_elevate/features/auth/login/domain/use_cases/sign_in_use_case.dart';
 import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_events.dart';
 import 'package:exam_app_elevate/features/auth/login/presentation/view_model/sign_in_states.dart';
@@ -45,7 +45,7 @@ class SignInViewModel extends Cubit<SignInState> {
       state.copyWith(signInState: state.signInState.copyWith(isLoading: true)),
     );
 
-    final BaseResponse<SignInEntity> apiResult = await _signInUseCase(
+    final BaseResponse<AuthEntity> apiResult = await _signInUseCase(
       email: email,
       password: password,
       rememberMe: rememberMe,
@@ -55,7 +55,7 @@ class SignInViewModel extends Cubit<SignInState> {
     if (isClosed) return;
 
     switch (apiResult) {
-      case SuccessBaseResponse<SignInEntity>():
+      case SuccessBaseResponse<AuthEntity>():
         emit(
           state.copyWith(
             signInState: state.signInState.copyWith(
@@ -64,7 +64,7 @@ class SignInViewModel extends Cubit<SignInState> {
             ),
           ),
         );
-      case ErrorBaseResponse<SignInEntity>():
+      case ErrorBaseResponse<AuthEntity>():
         emit(
           state.copyWith(
             signInState: state.signInState.copyWith(

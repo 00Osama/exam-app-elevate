@@ -1,20 +1,21 @@
-import 'package:exam_app_elevate/features/auth/login/data/models/user_model.dart';
-import 'package:exam_app_elevate/features/auth/login/domain/entity/sign_in_entity.dart';
+import 'package:exam_app_elevate/features/auth/entity/auth_entity.dart';
+import 'package:exam_app_elevate/features/auth/models/user_model.dart';
 import 'package:exam_app_elevate/features/auth/login/domain/entity/user_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'sign_in_response.g.dart';
+part 'auth_response_model.g.dart';
+
 @JsonSerializable()
-class SignInResponse {
+class AuthResponseModel {
   final String? message;
   final int? code; // only in error case
   final String? token; // only in success case
   final UserModel? user;
 
-  const SignInResponse({this.message, this.code, this.token, this.user});
+  const AuthResponseModel({this.message, this.code, this.token, this.user});
 //mapper 
-SignInEntity toDomain() {
-  return SignInEntity(
+ AuthEntity toDomain() {
+  return AuthEntity(
     token: token ?? '',
     user: user?.toDomain() ??
         const UserEntity(
@@ -23,8 +24,11 @@ SignInEntity toDomain() {
         ),
   );
 }
-  factory SignInResponse.fromJson(Map<String, dynamic> json) =>
-      _$SignInResponseFromJson(json);
 
-  Map<String, dynamic> toJson() => _$SignInResponseToJson(this);
+
+
+  factory AuthResponseModel.fromJson(Map<String, dynamic> json) =>
+      _$AuthResponseModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AuthResponseModelToJson(this);
 }

@@ -19,4 +19,38 @@ abstract class AppValidators {
     }
     return null;
   }
+
+  static String? username(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return AppStrings.usernameRequired;
+  }
+  return null;
+}
+
+static String? name(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return AppStrings.nameRequired;
+  }
+  return null;
+}
+
+static String? phone(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return AppStrings.phoneRequired;
+  }
+  if (!RegExp(r'^[0-9]{11}$').hasMatch(value.trim())) {
+    return AppStrings.phoneNotValid;
+  }
+  return null;
+}
+
+static String? confirmPassword(String? value, String password) {
+  if (value == null || value.isEmpty) {
+    return AppStrings.passwordRequired;
+  }
+  if (value != password) {
+    return AppStrings.passwordsNotMatch;
+  }
+  return null;
+}
 }

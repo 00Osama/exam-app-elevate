@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
-import 'user_entity.dart';
+import 'package:exam_app_elevate/features/auth/login/domain/entity/user_entity.dart';
 
-class SignInEntity extends Equatable {
+class AuthEntity extends Equatable {
   final String token;
   final UserEntity user;
 
-  const SignInEntity({required this.token, required this.user});
+  const AuthEntity({required this.token, required this.user});
 
   // Fields used to compare two objects
   @override
