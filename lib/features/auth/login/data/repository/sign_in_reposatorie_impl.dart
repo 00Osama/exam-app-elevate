@@ -3,16 +3,16 @@ import 'package:exam_app_elevate/features/auth/entity/auth_entity.dart';
 import 'package:exam_app_elevate/features/auth/login/data/data_sources/local/sign_in_local_data_source.dart';
 import 'package:exam_app_elevate/features/auth/login/data/data_sources/remote/sign_in_remote_data_source.dart';
 import 'package:exam_app_elevate/features/auth/login/data/models/sign_in_request.dart';
-import 'package:exam_app_elevate/features/auth/login/domain/reposatorie/sign_in_reposatorie.dart';
+import 'package:exam_app_elevate/features/auth/login/domain/repository/sign_in_reposatorie.dart';
 import 'package:exam_app_elevate/features/auth/models/auth_response_model.dart';
 import 'package:injectable/injectable.dart';
 
-@Injectable(as: SignInReposatory)
-class SignInReposatoryImpl implements SignInReposatory {
+@Injectable(as: SignInRepository)
+class SignInRepositoryImpl implements SignInRepository {
   final SignInRemoteDataSource _signInRemoteDataSource;
   final SignInLocalDataSource _signInLocalDataSource;
 
-  SignInReposatoryImpl(
+  SignInRepositoryImpl(
     this._signInRemoteDataSource,
     this._signInLocalDataSource,
   );

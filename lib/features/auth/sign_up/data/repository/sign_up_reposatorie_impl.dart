@@ -4,13 +4,13 @@ import 'package:exam_app_elevate/features/auth/sign_up/data/data_source/remote/s
 import 'package:exam_app_elevate/features/auth/sign_up/data/models/sign_up_request.dart';
 import 'package:exam_app_elevate/features/auth/entity/auth_entity.dart';
 import 'package:exam_app_elevate/features/auth/sign_up/domain/entity/sign_up_param.dart';
-import 'package:exam_app_elevate/features/auth/sign_up/domain/reposatorie/sign_up_reposatorie.dart';
+import 'package:exam_app_elevate/features/auth/sign_up/domain/Repository/sign_up_Repository.dart';
 import 'package:injectable/injectable.dart';
 
-@Injectable(as: SignUpReposatory)
-class SignUpReposatoryImpl implements SignUpReposatory {
+@Injectable(as: SignUpRepository)
+class SignUpRepositoryImpl implements SignUpRepository {
   final SignUpRemoteDataSource _signUpRemoteDataSource;
-  SignUpReposatoryImpl(this._signUpRemoteDataSource);
+  SignUpRepositoryImpl(this._signUpRemoteDataSource);
   @override
   Future<BaseResponse<AuthEntity>> signUp({
     required SignUpParams params
