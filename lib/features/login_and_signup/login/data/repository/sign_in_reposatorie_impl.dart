@@ -1,0 +1,72 @@
+import 'package:exam_app_elevate/config/base_response/base_response.dart';
+import 'package:exam_app_elevate/features/login_and_signup/entity/auth_entity.dart';
+import 'package:exam_app_elevate/features/login_and_signup/login/data/data_sources/local/sign_in_local_data_source.dart';
+import 'package:exam_app_elevate/features/login_and_signup/login/data/data_sources/remote/sign_in_remote_data_source.dart';
+import 'package:exam_app_elevate/features/login_and_signup/login/data/models/sign_in_request.dart';
+import 'package:exam_app_elevate/features/login_and_signup/login/domain/repository/sign_in_reposatorie.dart';
+import 'package:exam_app_elevate/features/login_and_signup/models/auth_response_model.dart';
+import 'package:injectable/injectable.dart';
+
+@Injectable(as: SignInRepository)
+class SignInRepositoryImpl implements SignInRepository {
+  final SignInRemoteDataSource _signInRemoteDataSource;
+  final SignInLocalDataSource _signInLocalDataSource;
+
+  SignInRepositoryImpl(
+    this._signInRemoteDataSource,
+    this._signInLocalDataSource,
+  );
+
+  @override
+  Future<BaseResponse<AuthEntity>> signIn({
+    required String email,
+    required String password,
+    required bool rememberMe,
+  }) async {
+    // 1- make request
+    final SignInRequest request = SignInRequest(
+      email: email,
+      password: password,
+    );
+
+    // 2- take the response from data source
+    final BaseResponse<AuthResponseModel> response =
+        await _signInRemoteDataSource.signIn(request: request);
+    //3- save token and remember me
+    if (response is SuccessBaseResponse<AuthResponseModel>) {
+      final String? token = response.data.token;
+      if (token != null) {
+        await _signInLocalDataSource.saveToken(token);
+        await _signInLocalDataSource.saveRememberMe(rememberMe);
+      }
+    }
+    //4-convert to entity if success / convert error message if error
+    return switch (response) {
+      SuccessBaseResponse<AuthResponseModel>(:final data) =>
+        // 5- convert model to entity
+        SuccessBaseResponse<AuthEntity>(data: data.toDomain()),
+      ErrorBaseResponse<AuthResponseModel>(:final errMessage) =>
+        ErrorBaseResponse<AuthEntity>.fromErrorMsg(errMessage),
+    };
+  }
+
+  @override
+  Future<bool> isLoggedIn() async {
+    try {
+      // 1- get remember me and token
+      final bool rememberMe = await _signInLocalDataSource.getRememberMe();
+      final String? token = await _signInLocalDataSource.getToken();
+
+      // 2- token not null and remember me = true => logged in => go to home
+      if (token != null && rememberMe) {
+        return true;
+      }
+
+      // 3- otherwise clear storage => go to login
+      await _signInLocalDataSource.clear();
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+}

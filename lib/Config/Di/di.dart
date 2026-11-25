@@ -1,3 +1,4 @@
+import 'package:exam_app_elevate/config/Di/di.config.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 

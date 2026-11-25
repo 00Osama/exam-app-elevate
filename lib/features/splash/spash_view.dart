@@ -1,6 +1,6 @@
 import 'package:exam_app_elevate/config/di/di.dart';
-import 'package:exam_app_elevate/core/constants/app_routes.dart';
-import 'package:exam_app_elevate/features/auth/login/domain/use_cases/is_logged_in_use_case.dart';
+import 'package:exam_app_elevate/core/app_rotutes_manager.dart/app_routes.dart';
+import 'package:exam_app_elevate/features/login_and_signup/login/domain/use_cases/is_logged_in_use_case.dart';
 import 'package:exam_app_elevate/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 
